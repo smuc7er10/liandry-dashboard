@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Liandry's — Partner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink: #0A0A0A; --paper: #F6F3EE; --gold: #B8924A; --gold2: #D4A85A;
+  --crimson: #9B1D20; --dim: #6B6560; --smoke: #C8C3BC; --card: #EEEAE4;
+  --white: #FFFFFF; --green: #2A6B45; --green-lt: #E4F0EA; --border: rgba(184,146,74,0.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--ink);-webkit-font-smoothing:antialiased;}
+body{font-family:'DM Sans',sans-serif;background:var(--ink);min-height:100vh;color:var(--ink);position:relative;}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:0.6;
+}
+.shell{position:relative;z-index:1;max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+.hdr{background:var(--ink);padding:32px 24px 28px;border-bottom:1px solid rgba(184,146,74,0.2);position:relative;overflow:hidden;}
+.hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.28em;color:var(--gold);margin-bottom:20px;opacity:0.8;}
+.hdr-names{display:flex;align-items:center;gap:0;margin-bottom:8px;}
+.hdr-name{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:0.04em;line-height:1;color:var(--white);}
+.hdr-amp{font-family:'Crimson Pro',serif;font-size:2rem;font-style:italic;color:var(--gold);margin:0 10px;line-height:1;}
+.hdr-sub{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke);font-weight:300;}
+.hdr-date{position:absolute;top:32px;right:24px;text-align:right;}
+.hdr-date-val{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.1em;color:var(--gold);}
+.hdr-date-day{font-size:0.6rem;letter-spacing:0.15em;color:var(--smoke);margin-top:2px;}
+.tabs{display:flex;background:var(--ink);border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:10;}
+.tab{flex:1;padding:14px 0;text-align:center;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--smoke);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.section{display:none;flex:1;}
+.section.active{display:block;}
+.pad{padding:24px 20px;}
+.vision{background:var(--crimson);padding:20px 20px;margin-bottom:20px;position:relative;overflow:hidden;}
+.vision-label{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:6px;}
+.vision-text{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.1rem;line-height:1.5;color:#fff;}
+.sec-title{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--smoke);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
+.partner-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.partner-card{background:var(--paper);padding:16px 14px;border-radius:2px;position:relative;overflow:hidden;}
+.partner-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--gold);}
+.partner-card.crimson::before{background:var(--crimson);}
+.pc-role{font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.pc-name{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.04em;color:var(--ink);line-height:1;}
+.pc-stat{margin-top:10px;}
+.pc-stat-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);line-height:1;}
+.partner-card.crimson .pc-stat-val{color:var(--crimson);}
+.pc-stat-lbl{font-size:0.58rem;color:var(--dim);margin-top:2px;letter-spacing:0.05em;}
+.streak-row{display:flex;gap:6px;margin-bottom:20px;}
+.streak-day{flex:1;height:36px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:var(--smoke);}
+.streak-day.done{background:var(--gold);color:var(--ink);}
+.log-card{background:var(--paper);padding:20px;margin-bottom:16px;border-radius:2px;border-left:3px solid var(--gold);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
+.field input, .field textarea{width:100%;background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.1);padding:10px;font-family:inherit;font-size:0.85rem;}
+.save-btn{width:100%;padding:14px;background:var(--ink);color:var(--gold);border:none;font-family:'Bebas Neue';font-size:1.1rem;letter-spacing:0.15em;cursor:pointer;}
+.ai-card{background:var(--ink);border:1px solid rgba(184,146,74,0.2);padding:20px;margin-bottom:16px;}
+.ai-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;display:block;}
+.ai-text{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;line-height:1.7;color:rgba(255,255,255,0.8);}
+.ai-generate{width:100%;padding:12px;margin-top:12px;background:transparent;border:1px solid rgba(184,146,74,0.3);color:var(--gold);text-transform:uppercase;font-size:0.7rem;cursor:pointer;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--gold);padding:10px 20px;border:1px solid var(--gold);opacity:0;transition:0.3s;pointer-events:none;z-index:100;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="hdr">
+    <div class="hdr-logo">Liandry's Media · Dubai</div>
+    <div class="hdr-names"><div class="hdr-name">SHIBIL</div><div class="hdr-amp">&</div><div class="hdr-name" id="partner-name-hdr">YOU</div></div>
+    <div class="hdr-sub">Partner Growth Dashboard</div>
+    <div class="hdr-date"><div class="hdr-date-val" id="hdr-date">—</div><div class="hdr-date-day" id="hdr-day">—</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('today')">Today</div>
+    <div class="tab" onclick="switchTab('progress')">Progress</div>
+    <div class="tab" onclick="switchTab('coach')">AI Coach</div>
+    <div class="tab" onclick="switchTab('mission')">Mission</div>
+  </div>
+
+  <div class="section active" id="tab-today">
+    <div class="pad">
+      <div class="vision">
+        <div class="vision-label">Today's Focus</div>
+        <div class="vision-text" id="daily-quote">"One deal changes the whole week. Make the calls."</div>
+      </div>
+      <div class="partner-row">
+        <div class="partner-card">
+          <div class="pc-role">Shibil · Sales</div><div class="pc-name">Closed</div>
+          <div class="pc-stat"><div class="pc-stat-val" id="week-deals">0</div><div class="pc-stat-lbl">AED this week</div></div>
+        </div>
+        <div class="partner-card crimson">
+          <div class="pc-role" id="p-role">Partner</div><div class="pc-name" id="p-name">You</div>
+          <div class="pc-stat"><div class="pc-stat-val" id="week-dms">0</div><div class="pc-stat-lbl">DMs sent</div></div>
+        </div>
+      </div>
+      <div class="log-card">
+        <div class="field"><label>DMs Sent Today</label><input type="number" id="f-dms" placeholder="0"/></div>
+        <div class="field"><label>Deals Closed (AED)</label><input type="number" id="f-deals" placeholder="0"/></div>
+        <div class="field"><label>Best Win / Notes</label><textarea id="f-notes" placeholder="What happened today?"></textarea></div>
+        <button class="save-btn" onclick="saveToday()">Save Today's Log</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="tab-coach">
+    <div class="pad">
+      <div class="ai-card">
+        <span class="ai-label">Daily Coaching · Powered by Gemini</span>
+        <div class="ai-text" id="ai-message">Save today's log for aggressive feedback.</div>
+        <button class="ai-generate" id="ai-btn" onclick="generateCoaching()">Generate Strategy ↗</button>
+      </div>
+      <div style="margin-top:20px; opacity:0.6;">
+        <label style="font-size:0.6rem; color:#fff; display:block; margin-bottom:5px;">Gemini API Key</label>
+        <input type="password" id="api-key-inline" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid #333; color:#fff; padding:8px;"/>
+        <button onclick="saveApiKey()" style="margin-top:8px; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 10px; cursor:pointer;">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="tab-progress"><div class="pad"><div id="history-list" style="color:#fff;">Log history will appear here.</div></div></div>
+  <div class="section" id="tab-mission"><div class="pad"><div class="vision"><div class="vision-text">"We are building Liandry's — every day is a brick in the foundation."</div></div></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAY_KEY = () => new Date().toISOString().slice(0,10);
+const load = (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e) { return def; } };
+const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+let logs = load('lm_logs', {});
+let settings = load('lm_settings', { name: 'You', role: 'Partner' });
+let apiKey = load('lm_api_key', '');
+
+function init() {
+  const now = new Date();
+  document.getElementById('hdr-date').textContent = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase();
+  document.getElementById('hdr-day').textContent = now.toLocaleDateString('en-GB',{weekday:'long'}).toUpperCase();
+  document.getElementById('p-name').textContent = settings.name;
+  document.getElementById('partner-name-hdr').textContent = settings.name.toUpperCase();
+  if(apiKey) document.getElementById('api-key-inline').value = apiKey;
+  updateStats();
+}
+
+function saveToday() {
+  const dms = parseInt(document.getElementById('f-dms').value) || 0;
+  const deals = parseFloat(document.getElementById('f-deals').value) || 0;
+  logs[DAY_KEY()] = { dms, deals, notes: document.getElementById('f-notes').value };
+  save('lm_logs', logs);
+  updateStats();
+  toast('Log Saved ✓');
+}
+
+function updateStats() {
+  let totalDeals = 0, totalDMs = 0;
+  Object.values(logs).forEach(l => { totalDeals += (l.deals || 0); totalDMs += (l.dms || 0); });
+  document.getElementById('week-deals').textContent = totalDeals.toLocaleString();
+  document.getElementById('week-dms').textContent = totalDMs.toLocaleString();
+}
+
+async function generateCoaching() {
+  const key = load('lm_api_key', '');
+  if(!key) { toast('Enter API Key'); return; }
+  const today = logs[DAY_KEY()];
+  if(!today) { toast('Log today first'); return; }
+
+  const btn = document.getElementById('ai-btn');
+  btn.textContent = 'Thinking...';
+  
+  const prompt = `You are a business coach for Shibil and Ashiq at Liandry's Media. Today stats: DMs: ${today.dms}, Deals: ${today.deals} AED. Notes: ${today.notes}. Give a 3-sentence aggressive growth plan.`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    document.getElementById('ai-message').innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br/>');
+  } catch(e) { toast('API Error'); }
+  finally { btn.textContent = 'Generate Strategy ↗'; }
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['today','progress','coach','mission'][i] === name));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function saveApiKey() { 
+  const k = document.getElementById('api-key-inline').value.trim(); 
+  if(k) { save('lm_api_key', k); toast('Key Saved ✓'); } 
+}
+
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+
+init();
+</script>
+</body>
+</html>
