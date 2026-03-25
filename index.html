@@ -106,7 +106,9 @@ body::before{
       <div class="log-card">
         <div class="field"><label id="log-label-dms">DMs Sent Today</label><input type="number" id="f-dms" placeholder="0"/></div>
         <div class="field"><label id="log-label-deals">Deals Closed (AED)</label><input type="number" id="f-deals" placeholder="0"/></div>
-        <div class="field"><label>Best Win / Notes</label><textarea id="f-notes" placeholder="What happened today?"></textarea></div>
+        <div class="field"><label>Service They Want</label><input type="text" id="f-service" placeholder="e.g. Branding, Ads..."/></div>
+        <div class="field"><label>Deadline for Creatives</label><input type="date" id="f-deadline"/></div>
+        <div class="field"><label>Quick Notes</label><textarea id="f-notes" placeholder="Any other details?"></textarea></div>
         <button class="save-btn" id="save-btn" onclick="saveToday()">Save Today's Log</button>
       </div>
     </div>
@@ -146,7 +148,8 @@ const firebaseConfig = {
   storageBucket: "liandry-dashboard.firebasestorage.app",
   messagingSenderId: "336280061691",
   appId: "1:336280061691:web:d9b982ad3a613ff571525e",
-  measurementId: "G-H8Z9KZ85W7"
+  measurementId: "G-H8Z9KZ85W7",
+  databaseURL: "https://liandry-dashboard-default-rtdb.firebaseio.com"
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -182,10 +185,12 @@ window.saveApiKey = () => {
 window.saveToday = async () => {
   const dms = parseInt(document.getElementById('f-dms').value) || 0;
   const deals = parseFloat(document.getElementById('f-deals').value) || 0;
+  const service = document.getElementById('f-service').value;
+  const deadline = document.getElementById('f-deadline').value;
   const notes = document.getElementById('f-notes').value;
   
   const path = `logs/${userProfile}/${DAY_KEY()}`;
-  await set(ref(db, path), { dms, deals, notes, timestamp: Date.now() });
+  await set(ref(db, path), { dms, deals, service, deadline, notes, timestamp: Date.now() });
   toast('Log Saved to Cloud ✓');
 };
 window.generateCoaching = async () => {
@@ -263,6 +268,8 @@ function updateDashboard() {
       <div style="font-size:0.8rem; color:#fff; margin-top:5px;">
         ${item.dms ? `DMs: ${item.dms} | ` : ''} ${item.deals ? `Deals: ${item.deals} AED` : ''}
       </div>
+      ${item.service ? `<div style="font-size:0.7rem; color:var(--gold); margin-top:5px;">Service: ${item.service}</div>` : ''}
+      ${item.deadline ? `<div style="font-size:0.7rem; color:var(--smoke); margin-top:2px;">Deadline: ${item.deadline}</div>` : ''}
       <div style="font-size:0.7rem; color:var(--smoke); margin-top:5px; font-style:italic;">${item.notes || ''}</div>
     `;
     historyList.appendChild(div);
